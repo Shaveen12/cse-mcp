@@ -1,4 +1,7 @@
 # CSE MCP Server
+<!-- 
+[![npm version](https://badge.fury.io/js/cse-mcp.svg)](https://www.npmjs.com/package/cse-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/cse-mcp.svg)](https://www.npmjs.com/package/cse-mcp) -->
 
 A Model Context Protocol (MCP) server that provides real-time stock market data from the Colombo Stock Exchange (CSE). This server enables AI assistants to search for companies and retrieve current stock prices from the Sri Lankan stock market.
 
@@ -9,29 +12,7 @@ A Model Context Protocol (MCP) server that provides real-time stock market data 
 - **Fuzzy Matching**: Find companies even with typos or partial names
 - **308 Companies**: Complete database of all CSE-listed companies
 
-## Installation
-
-### Via NPM (Recommended)
-```bash
-npx cse-mcp
-```
-
-Or install globally:
-```bash
-npm install -g cse-mcp
-cse-mcp
-```
-
-### From Source
-```bash
-git clone https://github.com/Shaveen12/cse-mcp.git
-cd cse-mcp
-npm install
-npm run build
-npm start
-```
-
-## Usage with MCP Clients
+## Installation with MCP Clients
 
 ### Claude Desktop / Claude Code
 
@@ -159,7 +140,7 @@ Get real-time stock price data for a specific ticker symbol.
 - Node.js 16 or higher
 - npm or yarn
 
-### Setup
+### Building from Source
 ```bash
 # Clone the repository
 git clone https://github.com/Shaveen12/cse-mcp.git
@@ -171,8 +152,11 @@ npm install
 # Build TypeScript
 npm run build
 
-# Run in development mode
+# Run in development mode (watches for changes)
 npm run dev
+
+# Test locally with MCP Inspector
+npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
 ### Project Structure
@@ -189,17 +173,6 @@ cse-mcp/
 └── README.md
 ```
 
-### Testing with MCP Inspector
-
-You can test the server using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector):
-
-```bash
-# Install MCP Inspector
-npm install -g @modelcontextprotocol/inspector
-
-# Run the inspector with the server
-mcp-inspector node dist/index.js
-```
 
 ## API Rate Limits
 
