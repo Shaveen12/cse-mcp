@@ -6,6 +6,7 @@ name: Node.js Package
 on:
   release:
     types: [created]
+  workflow_dispatch: # Allows manual triggering from GitHub UI
 
 jobs:
   build:

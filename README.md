@@ -35,21 +35,6 @@ Alternatively, add to your Claude configuration (`~/Library/Application Support/
 }
 ```
 
-### Continue
-
-Add to your Continue configuration (`~/.continue/config.json`):
-
-```json
-{
-  "mcpServers": {
-    "cse": {
-      "command": "npx",
-      "args": ["cse-mcp"]
-    }
-  }
-}
-```
-
 ### Other MCP Clients
 
 Use the following command configuration:
