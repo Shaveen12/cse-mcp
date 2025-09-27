@@ -24,7 +24,7 @@ cse-mcp
 
 ### From Source
 ```bash
-git clone https://github.com/yourusername/cse-mcp.git
+git clone https://github.com/Shaveen12/cse-mcp.git
 cd cse-mcp
 npm install
 npm run build
@@ -33,9 +33,15 @@ npm start
 
 ## Usage with MCP Clients
 
-### Claude Desktop
+### Claude Desktop / Claude Code
 
-Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
+#### Using Claude CLI (Recommended)
+```bash
+claude mcp add cse-mcp -- npx cse-mcp
+```
+
+#### Manual Configuration
+Alternatively, add to your Claude configuration (`~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
 
 ```json
 {
@@ -156,7 +162,7 @@ Get real-time stock price data for a specific ticker symbol.
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cse-mcp.git
+git clone https://github.com/Shaveen12/cse-mcp.git
 cd cse-mcp
 
 # Install dependencies
@@ -226,7 +232,7 @@ This tool is for informational purposes only. Stock market data may be delayed. 
 
 ## Support
 
-For issues, questions, or suggestions, please open an issue on [GitHub](https://github.com/yourusername/cse-mcp/issues).
+For issues, questions, or suggestions, please open an issue on [GitHub](https://github.com/Shaveen12/cse-mcp/issues).
 
 ## Acknowledgments
 
