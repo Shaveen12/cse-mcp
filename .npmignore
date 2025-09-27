@@ -1,0 +1,47 @@
+# Source files
+src/
+tsconfig.json
+*.ts
+
+# Git files
+.git/
+.gitignore
+
+# Development files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.*
+
+# Testing
+coverage/
+.nyc_output/
+test/
+tests/
+
+# Documentation source
+docs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts not needed
+*.map
+*.tsbuildinfo
+
+# Development dependencies
+.eslintrc*
+.prettierrc*
+
+# Other
+.npmrc
+.editorconfig

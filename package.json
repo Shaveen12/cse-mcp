@@ -1,0 +1,33 @@
+{
+  "name": "cse-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Colombo Stock Exchange real-time data",
+  "main": "dist/index.js",
+  "bin": {
+    "cse-mcp": "./bin/cse-mcp.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["mcp", "cse", "colombo", "stock", "exchange", "sri-lanka"],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist/",
+    "bin/",
+    "cse_companies.csv"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "axios": "^1.7.9",
+    "csv-parse": "^5.6.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  }
+}
