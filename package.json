@@ -1,6 +1,6 @@
 {
   "name": "cse-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for Colombo Stock Exchange real-time data",
   "main": "dist/index.js",
   "bin": {
@@ -11,7 +11,14 @@
     "start": "node dist/index.js",
     "dev": "tsc --watch"
   },
-  "keywords": ["mcp", "cse", "colombo", "stock", "exchange", "sri-lanka"],
+  "keywords": [
+    "mcp",
+    "cse",
+    "colombo",
+    "stock",
+    "exchange",
+    "sri-lanka"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
