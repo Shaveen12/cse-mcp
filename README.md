@@ -1,7 +1,7 @@
 # CSE MCP Server
-<!-- 
+
 [![npm version](https://badge.fury.io/js/cse-mcp.svg)](https://www.npmjs.com/package/cse-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/cse-mcp.svg)](https://www.npmjs.com/package/cse-mcp) -->
+[![npm downloads](https://img.shields.io/npm/dm/cse-mcp.svg)](https://www.npmjs.com/package/cse-mcp)
 
 A Model Context Protocol (MCP) server that provides real-time stock market data from the Colombo Stock Exchange (CSE). This server enables AI assistants to search for companies and retrieve current stock prices from the Sri Lankan stock market.
 
