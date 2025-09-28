@@ -151,6 +151,180 @@ async function getStockData(symbol: string) {
   }
 }
 
+async function getDetailedCompanyInfo(symbol: string) {
+  const company = companies.find(c => c.symbol === symbol);
+  
+  if (!company) {
+    throw new Error(`Symbol ${symbol} not found. Please use search_company to find valid symbols.`);
+  }
+  
+  try {
+    const response = await axios.post(
+      'https://www.cse.lk/api/companyInfoSummery',
+      `symbol=${symbol}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        timeout: 10000
+      }
+    );
+    
+    const data = response.data;
+    const symbolInfo = data.reqSymbolInfo || {};
+    const betaInfo = data.reqSymbolBetaInfo || {};
+    
+    return {
+      symbol: symbolInfo.symbol,
+      companyName: symbolInfo.name,
+      lastTradedPrice: symbolInfo.lastTradedPrice,
+      price52WeekHigh: symbolInfo.p12HiPrice,
+      price52WeekLow: symbolInfo.p12LowPrice,
+      ytdShareVolume: symbolInfo.ytdShareVolume,
+      ytdTurnover: symbolInfo.ytdTurnover,
+      marketCap: symbolInfo.marketCap,
+      sharesIssued: symbolInfo.sharesIssued,
+      beta: betaInfo.beta,
+      lastUpdated: new Date().toISOString()
+    };
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timed out. Please try again.');
+    } else if (error.response) {
+      throw new Error(`API error: ${error.response.status} - ${error.response.statusText}`);
+    } else {
+      throw new Error(`Network error: ${error.message}`);
+    }
+  }
+}
+
+async function getTopGainers() {
+  try {
+    const response = await axios.post(
+      'https://www.cse.lk/api/topGainers',
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    const data = response.data || [];
+    
+    return data.map((item: any) => ({
+      symbol: item.symbol,
+      price: item.price,
+      change: item.change,
+      changePercentage: item.changePercentage
+    }));
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timed out. Please try again.');
+    } else if (error.response) {
+      throw new Error(`API error: ${error.response.status} - ${error.response.statusText}`);
+    } else {
+      throw new Error(`Network error: ${error.message}`);
+    }
+  }
+}
+
+async function getTopLosers() {
+  try {
+    const response = await axios.post(
+      'https://www.cse.lk/api/topLooses',
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    const data = response.data || [];
+    
+    return data.map((item: any) => ({
+      symbol: item.symbol,
+      price: item.price,
+      change: item.change,
+      changePercentage: item.changePercentage
+    }));
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timed out. Please try again.');
+    } else if (error.response) {
+      throw new Error(`API error: ${error.response.status} - ${error.response.statusText}`);
+    } else {
+      throw new Error(`Network error: ${error.message}`);
+    }
+  }
+}
+
+async function getMostActiveStocks() {
+  try {
+    const response = await axios.post(
+      'https://www.cse.lk/api/mostActiveTrades',
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    const data = response.data || [];
+    
+    return data.map((item: any) => ({
+      symbol: item.symbol,
+      tradeVolume: item.tradeVolume,
+      shareVolume: item.shareVolume,
+      turnover: item.turnover
+    }));
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timed out. Please try again.');
+    } else if (error.response) {
+      throw new Error(`API error: ${error.response.status} - ${error.response.statusText}`);
+    } else {
+      throw new Error(`Network error: ${error.message}`);
+    }
+  }
+}
+
+async function getMarketSummary() {
+  try {
+    const response = await axios.post(
+      'https://www.cse.lk/api/marketSummery',
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    const data = response.data || {};
+    
+    return {
+      tradeVolume: data.tradeVolume,
+      shareVolume: data.shareVolume,
+      tradeDate: data.tradeDate ? new Date(data.tradeDate).toISOString() : null
+    };
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timed out. Please try again.');
+    } else if (error.response) {
+      throw new Error(`API error: ${error.response.status} - ${error.response.statusText}`);
+    } else {
+      throw new Error(`Network error: ${error.message}`);
+    }
+  }
+}
+
 async function main() {
   await loadCompanies();
   
@@ -235,6 +409,218 @@ async function main() {
           content: [{
             type: "text",
             text: `Error fetching stock data: ${error.message}`
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+  
+  server.registerTool(
+    "get_detailed_company_info",
+    {
+      title: "Get Detailed Company Info",
+      description: "Get comprehensive company information including 52-week high/low, YTD metrics, market cap, and beta values. Use search_company first to find the correct symbol.",
+      inputSchema: {
+        symbol: z.string()
+          .regex(/^[A-Z]+\.[A-Z0-9]+$/, "Invalid symbol format. Use format like 'JKH.N0000'")
+          .describe("Ticker symbol from CSE (e.g., 'JKH.N0000')")
+      }
+    },
+    async ({ symbol }) => {
+      try {
+        const detailedInfo = await getDetailedCompanyInfo(symbol);
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              symbol: detailedInfo.symbol,
+              companyName: detailedInfo.companyName,
+              lastTradedPrice: detailedInfo.lastTradedPrice ? `Rs. ${detailedInfo.lastTradedPrice.toFixed(2)}` : 'N/A',
+              price52WeekHigh: detailedInfo.price52WeekHigh ? `Rs. ${detailedInfo.price52WeekHigh.toFixed(2)}` : 'N/A',
+              price52WeekLow: detailedInfo.price52WeekLow ? `Rs. ${detailedInfo.price52WeekLow.toFixed(2)}` : 'N/A',
+              ytdShareVolume: detailedInfo.ytdShareVolume?.toLocaleString() || 'N/A',
+              ytdTurnover: detailedInfo.ytdTurnover ? `Rs. ${detailedInfo.ytdTurnover.toLocaleString()}` : 'N/A',
+              marketCap: detailedInfo.marketCap ? `Rs. ${detailedInfo.marketCap.toLocaleString()}` : 'N/A',
+              sharesIssued: detailedInfo.sharesIssued?.toLocaleString() || 'N/A',
+              beta: detailedInfo.beta || 'N/A',
+              lastUpdated: detailedInfo.lastUpdated
+            }, null, 2)
+          }]
+        };
+      } catch (error: any) {
+        return {
+          content: [{
+            type: "text",
+            text: `Error fetching detailed company info: ${error.message}`
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+  
+  server.registerTool(
+    "get_top_gainers",
+    {
+      title: "Get Top Gainers",
+      description: "Get the top 10 gaining stocks in the CSE for the current trading day.",
+      inputSchema: {}
+    },
+    async () => {
+      try {
+        const topGainers = await getTopGainers();
+        
+        const formattedGainers = topGainers.map((stock: any, index: number) => {
+          const priceChangeSymbol = stock.change >= 0 ? '+' : '';
+          return {
+            rank: index + 1,
+            symbol: stock.symbol,
+            price: `Rs. ${stock.price.toFixed(2)}`,
+            change: `${priceChangeSymbol}${stock.change.toFixed(2)}`,
+            changePercentage: `${priceChangeSymbol}${stock.changePercentage.toFixed(2)}%`
+          };
+        });
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              title: "Top 10 Gainers",
+              count: formattedGainers.length,
+              gainers: formattedGainers,
+              lastUpdated: new Date().toISOString()
+            }, null, 2)
+          }]
+        };
+      } catch (error: any) {
+        return {
+          content: [{
+            type: "text",
+            text: `Error fetching top gainers: ${error.message}`
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+  
+  server.registerTool(
+    "get_top_losers",
+    {
+      title: "Get Top Losers",
+      description: "Get the top 10 losing stocks in the CSE for the current trading day.",
+      inputSchema: {}
+    },
+    async () => {
+      try {
+        const topLosers = await getTopLosers();
+        
+        const formattedLosers = topLosers.map((stock: any, index: number) => {
+          const priceChangeSymbol = stock.change >= 0 ? '+' : '';
+          return {
+            rank: index + 1,
+            symbol: stock.symbol,
+            price: `Rs. ${stock.price.toFixed(2)}`,
+            change: `${priceChangeSymbol}${stock.change.toFixed(2)}`,
+            changePercentage: `${priceChangeSymbol}${stock.changePercentage.toFixed(2)}%`
+          };
+        });
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              title: "Top 10 Losers",
+              count: formattedLosers.length,
+              losers: formattedLosers,
+              lastUpdated: new Date().toISOString()
+            }, null, 2)
+          }]
+        };
+      } catch (error: any) {
+        return {
+          content: [{
+            type: "text",
+            text: `Error fetching top losers: ${error.message}`
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+  
+  server.registerTool(
+    "get_most_active_stocks",
+    {
+      title: "Get Most Active Stocks",
+      description: "Get the top 10 most actively traded stocks by volume in the CSE for the current trading day.",
+      inputSchema: {}
+    },
+    async () => {
+      try {
+        const mostActive = await getMostActiveStocks();
+        
+        const formattedActive = mostActive.map((stock: any, index: number) => ({
+          rank: index + 1,
+          symbol: stock.symbol,
+          tradeVolume: stock.tradeVolume?.toLocaleString() || 'N/A',
+          shareVolume: stock.shareVolume?.toLocaleString() || 'N/A',
+          turnover: stock.turnover ? `Rs. ${stock.turnover.toLocaleString()}` : 'N/A'
+        }));
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              title: "Top 10 Most Active Stocks",
+              count: formattedActive.length,
+              stocks: formattedActive,
+              lastUpdated: new Date().toISOString()
+            }, null, 2)
+          }]
+        };
+      } catch (error: any) {
+        return {
+          content: [{
+            type: "text",
+            text: `Error fetching most active stocks: ${error.message}`
+          }],
+          isError: true
+        };
+      }
+    }
+  );
+  
+  server.registerTool(
+    "get_market_summary",
+    {
+      title: "Get Market Summary",
+      description: "Get the overall market summary including total trade volume, share volume, and trade date.",
+      inputSchema: {}
+    },
+    async () => {
+      try {
+        const marketSummary = await getMarketSummary();
+        
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              title: "Market Summary",
+              tradeVolume: marketSummary.tradeVolume ? `Rs. ${marketSummary.tradeVolume.toLocaleString()}` : 'N/A',
+              shareVolume: marketSummary.shareVolume?.toLocaleString() || 'N/A',
+              tradeDate: marketSummary.tradeDate || 'N/A',
+              lastUpdated: new Date().toISOString()
+            }, null, 2)
+          }]
+        };
+      } catch (error: any) {
+        return {
+          content: [{
+            type: "text",
+            text: `Error fetching market summary: ${error.message}`
           }],
           isError: true
         };
